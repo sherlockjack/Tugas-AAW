@@ -1,0 +1,203 @@
+version: '3.8'
+
+services:
+  authentication:
+    build: ./auth
+    ports:
+      - "8000:8000"
+    environment:
+      - TENANT_ID=47dd6b24-0b23-46b0-a662-776158d089ba
+      - JWT_SECRET=auth_ms_jwt_secret
+      - DB_HOST=db_authentication
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=authentication
+      - AUTH_URL=http://localhost:8000
+      - ORDER_URL=http://localhost:8001
+      - PRODUCT_MS_URL=http://localhost:8002
+      - TENANT_SERVICE_URL=http://localhost:8003
+      - WISHLIST_URL=http://localhost:8004
+    depends_on:
+      - db_authentication
+    networks:
+      - marketplace
+    command: >
+      sh -c "pnpm run generate && pnpm run migrate && node dist/src/server.js"
+
+
+  orders:
+    build: ./orders
+    ports:
+      - "8001:8001"
+    environment:
+      - TENANT_ID=47dd6b24-0b23-46b0-a662-776158d089ba
+      - JWT_SECRET=auth_ms_jwt_secret
+      - DB_HOST=db_orders
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=orders
+      - AUTH_URL=http://localhost:8000
+      - ORDER_URL=http://localhost:8001
+      - PRODUCT_MS_URL=http://localhost:8002
+      - TENANT_SERVICE_URL=http://localhost:8003
+      - WISHLIST_URL=http://localhost:8004
+    depends_on:
+      - db_orders
+    networks:
+      - marketplace
+    command: >
+      sh -c "pnpm run generate && pnpm run migrate && node dist/src/server.js"
+
+
+  products:
+    build: ./product
+    ports:
+      - "8002:8002"
+    environment:
+      - TENANT_ID=47dd6b24-0b23-46b0-a662-776158d089ba
+      - JWT_SECRET=auth_ms_jwt_secret
+      - DB_HOST=db_products
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=products
+      - AUTH_URL=http://localhost:8000
+      - ORDER_URL=http://localhost:8001
+      - PRODUCT_MS_URL=http://localhost:8002
+      - TENANT_SERVICE_URL=http://localhost:8003
+      - WISHLIST_URL=http://localhost:8004
+    depends_on:
+      - db_products
+    networks:
+      - marketplace
+    command: >
+      sh -c "pnpm run generate && pnpm run migrate && node dist/src/server.js"
+
+  
+  tenant:
+    build: ./orders
+    ports:
+      - "8003:8003"
+    environment:
+      - TENANT_ID=47dd6b24-0b23-46b0-a662-776158d089ba
+      - JWT_SECRET=auth_ms_jwt_secret
+      - DB_HOST=db_tenant
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=tenant
+      - AUTH_URL=http://localhost:8000
+      - ORDER_URL=http://localhost:8001
+      - PRODUCT_MS_URL=http://localhost:8002
+      - TENANT_SERVICE_URL=http://localhost:8003
+      - WISHLIST_URL=http://localhost:8004
+    depends_on:
+      - db_tenant
+    networks:
+      - marketplace
+    command: >
+      sh -c "pnpm run generate && pnpm run migrate && node dist/src/server.js"
+
+
+  wishlist:
+    build: ./wishlist
+    ports:
+      - "8004:8004"
+    environment:
+      - TENANT_ID=47dd6b24-0b23-46b0-a662-776158d089ba
+      - JWT_SECRET=auth_ms_jwt_secret
+      - DB_HOST=db_wishlist
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=wishlist
+      - AUTH_URL=http://localhost:8000
+      - ORDER_URL=http://localhost:8001
+      - PRODUCT_MS_URL=http://localhost:8002
+      - TENANT_SERVICE_URL=http://localhost:8003
+      - WISHLIST_URL=http://localhost:8004
+    depends_on:
+      - db_wishlist
+    networks:
+      - marketplace
+    command: >
+      sh -c "pnpm run generate && pnpm run migrate && node dist/src/server.js"
+
+
+  db_authentication:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: authentication
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5437:5432"
+    volumes:
+      - postgres_data_authentication:/var/lib/postgresql/data
+    networks:
+      - marketplace
+
+  db_orders:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: orders
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data_orders:/var/lib/postgresql/data
+    networks:
+      - marketplace
+
+  db_products:
+  
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: products
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_data_products:/var/lib/postgresql/data
+    networks:
+      - marketplace
+
+  db_tenant:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: tenant
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5435:5432"
+    volumes:
+      - postgres_data_tenant:/var/lib/postgresql/data
+    networks:
+      - marketplace
+
+  db_wishlist:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: wishlist
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5436:5432"
+    volumes:
+      - postgres_data_wishlist:/var/lib/postgresql/data
+    networks:
+      - marketplace
+
+volumes:
+  postgres_data_authentication:
+  postgres_data_orders:
+  postgres_data_products:
+  postgres_data_tenant:
+  postgres_data_wishlist:
+
+networks:
+  marketplace:
