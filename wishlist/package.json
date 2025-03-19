@@ -1,7 +1,7 @@
 {
-  "name": "wishlist",
+  "name": "marketplace",
   "version": "1.0.0",
-  "description": "wishlist",
+  "description": "marketplace",
   "main": "src/server.ts",
   "scripts": {
     "start": "node dist/server.js",

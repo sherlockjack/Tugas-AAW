@@ -1,10 +1,10 @@
 {
-  "name": "auth",
+  "name": "marketplace",
   "version": "1.0.0",
-  "description": "auth",
+  "description": "marketplace",
   "main": "src/server.ts",
   "scripts": {
-    "start": "node dist/src/server.js",
+    "start": "node dist/server.js",
     "dev": "nodemon --watch src --ext ts --exec ts-node src/server.ts",
     "build": "tsc && tsc-alias",
     "generate": "drizzle-kit generate:pg",
@@ -15,7 +15,6 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^1.6.7",
-    "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "drizzle-orm": "^0.30.2",
@@ -42,15 +41,5 @@
     "tsconfig-paths": "^4.2.0",
     "tsx": "^4.7.1",
     "typescript": "^5.3.3"
-  },
-  "pnpm": {
-    "ignoredBuiltDependencies": [
-      "bcrypt",
-      "es5-ext",
-      "esbuild"
-    ],
-    "onlyBuiltDependencies": [
-      "bcrypt"
-    ]
   }
 }

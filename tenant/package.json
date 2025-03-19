@@ -1,7 +1,7 @@
 {
-  "name": "tenant",
+  "name": "marketplace",
   "version": "1.0.0",
-  "description": "tenant",
+  "description": "marketplace",
   "main": "src/server.ts",
   "scripts": {
     "start": "node dist/server.js",
