@@ -1,0 +1,418 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Authentication Service API",
+    "version": "1.0.0",
+    "description": "API untuk manajemen autentikasi pengguna dan admin\n- Registrasi pengguna baru\n- Login pengguna\n- Verifikasi token JWT\n"
+  },
+  "host": "localhost:8000",
+  "basePath": "/api/auth",
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/register": {
+      "post": {
+        "tags": [
+          "Authentication V00"
+        ],
+        "summary": "Registrasi pengguna baru",
+        "description": "Endpoint untuk membuat akun pengguna baru",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RegisterRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "User created successfully",
+            "schema": {
+              "$ref": "#/definitions/UserResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "tags": [
+          "Authentication V00"
+        ],
+        "summary": "Login pengguna",
+        "description": "Endpoint untuk login pengguna",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/LoginRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "schema": {
+              "$ref": "#/definitions/LoginResponse"
+            }
+          },
+          "404": {
+            "description": "Invalid credentials"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/verify-token": {
+      "post": {
+        "tags": [
+          "Authentication V00"
+        ],
+        "summary": "Verifikasi user token",
+        "description": "Endpoint untuk memvalidasi token JWT pengguna",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/TokenVerificationRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Token valid",
+            "schema": {
+              "$ref": "#/definitions/UserResponse"
+            }
+          },
+          "401": {
+            "description": "Invalid token"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/verify-admin-token": {
+      "post": {
+        "tags": [
+          "Authentication V00"
+        ],
+        "summary": "Verifikasi admin token",
+        "description": "Endpoint untuk memvalidasi token JWT admin",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/TokenVerificationRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Token valid",
+            "schema": {
+              "$ref": "#/definitions/UserResponse"
+            }
+          },
+          "401": {
+            "description": "Invalid token"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v2/auth/login": {
+      "post": {
+        "tags": [
+          "Authentication V2"
+        ],
+        "summary": "Login pengguna (v2)",
+        "description": "Endpoint untuk login pengguna dengan format response terstandarisasi",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/LoginRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "schema": {
+              "$ref": "#/definitions/V2Response"
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "$ref": "#/definitions/V2ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/V2ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/v2/auth/register": {
+      "post": {
+        "tags": [
+          "Authentication V2"
+        ],
+        "summary": "Registrasi pengguna baru (v2)",
+        "description": "Endpoint untuk membuat akun pengguna baru dengan format response terstandarisasi",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RegisterRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "User created successfully",
+            "schema": {
+              "$ref": "#/definitions/V2Response"
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "schema": {
+              "$ref": "#/definitions/V2ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/V2ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/v2/auth/token-verification": {
+      "post": {
+        "tags": [
+          "Authentication V2"
+        ],
+        "summary": "Verifikasi token (v2)",
+        "description": "Endpoint untuk memvalidasi token dengan format response terstandarisasi",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/TokenVerificationRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Token valid",
+            "schema": {
+              "$ref": "#/definitions/V2Response"
+            }
+          },
+          "401": {
+            "description": "Invalid token",
+            "schema": {
+              "$ref": "#/definitions/V2ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/V2ErrorResponse"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "RegisterRequest": {
+      "type": "object",
+      "required": [
+        "username",
+        "email",
+        "password",
+        "full_name",
+        "address",
+        "phone_number"
+      ],
+      "properties": {
+        "username": {
+          "type": "string",
+          "example": "johndoe"
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "example": "johndoe@example.com"
+        },
+        "password": {
+          "type": "string",
+          "format": "password",
+          "minLength": 8,
+          "description": "Password harus mengandung:\n- Minimal 8 karakter\n- Minimal 1 huruf kecil\n- Minimal 1 huruf besar\n- Minimal 1 angka\n",
+          "example": "Password123"
+        },
+        "full_name": {
+          "type": "string",
+          "example": "John Doe"
+        },
+        "address": {
+          "type": "string",
+          "example": "Jl. Sudirman No. 123"
+        },
+        "phone_number": {
+          "type": "string",
+          "example": 81234567890
+        }
+      }
+    },
+    "LoginRequest": {
+      "type": "object",
+      "required": [
+        "username",
+        "password"
+      ],
+      "properties": {
+        "username": {
+          "type": "string",
+          "example": "johndoe"
+        },
+        "password": {
+          "type": "string",
+          "format": "password",
+          "example": "Password123"
+        }
+      }
+    },
+    "TokenVerificationRequest": {
+      "type": "object",
+      "required": [
+        "token"
+      ],
+      "properties": {
+        "token": {
+          "type": "string",
+          "description": "JWT token yang akan diverifikasi",
+          "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        }
+      }
+    },
+    "UserResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "full_name": {
+          "type": "string"
+        },
+        "address": {
+          "type": "string"
+        },
+        "phone_number": {
+          "type": "string"
+        }
+      }
+    },
+    "LoginResponse": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "string",
+          "description": "JWT token untuk autentikasi"
+        }
+      }
+    },
+    "ErrorResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "V2Response": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "data": {
+          "type": "object"
+        }
+      }
+    },
+    "V2ErrorResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "error": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            },
+            "details": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}

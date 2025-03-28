@@ -13,4 +13,8 @@ router.delete('/remove', verifyJWT, validate(Validation.removeProductFromWishlis
 router.delete('/:id', verifyJWT, validate(Validation.deleteWishlistSchema), Handler.deleteWishlistHandler);
 router.post('/add', verifyJWT, validate(Validation.addProductToWishlistSchema), Handler.addProductToWishlistHandler);
 
+
+//version2
+router.get("/v2", verifyJWT, Handler.getAllUserWishlistHandlerV2);
+router.post('/v2/wishlist', verifyJWT, validate(Validation.createWishlistSchema), Handler.createWishlistV2Handler);
 export default router;

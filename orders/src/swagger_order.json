@@ -1,0 +1,498 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Marketplace Order API",
+    "description": "API untuk manajemen order marketplace",
+    "version": "1.0.0"
+  },
+  "host": "localhost:8001",
+  "basePath": "/api/order",
+  "schemes": [
+    "http"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "securityDefinitions": {
+    "bearerAuth": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header",
+      "description": "JWT Token menggunakan skema Bearer Token.\nContoh: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c`\n"
+    }
+  },
+  "paths": {
+    "/": {
+      "get": {
+        "tags": [
+          "Order"
+        ],
+        "summary": "Get semua order user",
+        "description": "Mendapatkan semua order untuk user yang sedang login",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Daftar order berhasil didapatkan",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Order"
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/definitions/UnauthorizedError"
+          },
+          "500": {
+            "$ref": "#/definitions/InternalServerError"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Order"
+        ],
+        "summary": "Buat order baru",
+        "description": "Membuat order baru dari keranjang belanja",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/PlaceOrderRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Order berhasil dibuat",
+            "schema": {
+              "$ref": "#/definitions/Order"
+            }
+          },
+          "400": {
+            "$ref": "#/definitions/BadRequestError"
+          },
+          "401": {
+            "$ref": "#/definitions/UnauthorizedError"
+          },
+          "500": {
+            "$ref": "#/definitions/InternalServerError"
+          }
+        }
+      }
+    },
+    "/{orderId}": {
+      "get": {
+        "tags": [
+          "Order"
+        ],
+        "summary": "Dapatkan detail order",
+        "description": "Mendapatkan detail order berdasarkan ID",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Detail order berhasil didapatkan",
+            "schema": {
+              "$ref": "#/definitions/OrderDetail"
+            }
+          },
+          "401": {
+            "$ref": "#/definitions/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/definitions/NotFoundError"
+          },
+          "500": {
+            "$ref": "#/definitions/InternalServerError"
+          }
+        }
+      }
+    },
+    "/{orderId}/pay": {
+      "post": {
+        "tags": [
+          "Order"
+        ],
+        "summary": "Bayar order",
+        "description": "Proses pembayaran untuk order yang sudah dibuat",
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/PaymentRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Pembayaran berhasil diproses",
+            "schema": {
+              "$ref": "#/definitions/Payment"
+            }
+          },
+          "400": {
+            "$ref": "#/definitions/BadRequestError"
+          },
+          "404": {
+            "$ref": "#/definitions/NotFoundError"
+          },
+          "500": {
+            "$ref": "#/definitions/InternalServerError"
+          }
+        }
+      }
+    },
+    "/{orderId}/cancel": {
+      "post": {
+        "tags": [
+          "Order"
+        ],
+        "summary": "Batalkan order",
+        "description": "Membatalkan order yang sudah dibuat",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Order berhasil dibatalkan",
+            "schema": {
+              "$ref": "#/definitions/Order"
+            }
+          },
+          "401": {
+            "$ref": "#/definitions/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/definitions/NotFoundError"
+          },
+          "500": {
+            "$ref": "#/definitions/InternalServerError"
+          }
+        }
+      }
+    },
+    "/v2": {
+      "get": {
+        "tags": [
+          "Order"
+        ],
+        "summary": "Get semua order user (v2)",
+        "description": "Versi terbaru untuk mendapatkan semua order user",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Daftar order berhasil didapatkan",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/OrderV2"
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/definitions/UnauthorizedError"
+          },
+          "500": {
+            "$ref": "#/definitions/InternalServerError"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Order"
+        ],
+        "summary": "Buat order baru (v2)",
+        "description": "Versi terbaru untuk membuat order baru",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/PlaceOrderRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Order berhasil dibuat",
+            "schema": {
+              "$ref": "#/definitions/OrderV2"
+            }
+          },
+          "400": {
+            "$ref": "#/definitions/BadRequestError"
+          },
+          "401": {
+            "$ref": "#/definitions/UnauthorizedError"
+          },
+          "500": {
+            "$ref": "#/definitions/InternalServerError"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "PlaceOrderRequest": {
+      "type": "object",
+      "required": [
+        "shipping_provider"
+      ],
+      "properties": {
+        "shipping_provider": {
+          "type": "string",
+          "enum": [
+            "JNE",
+            "TIKI",
+            "SICEPAT",
+            "GOSEND",
+            "GRAB_EXPRESS"
+          ]
+        }
+      }
+    },
+    "PaymentRequest": {
+      "type": "object",
+      "required": [
+        "payment_method",
+        "payment_reference",
+        "amount"
+      ],
+      "properties": {
+        "payment_method": {
+          "type": "string"
+        },
+        "payment_reference": {
+          "type": "string"
+        },
+        "amount": {
+          "type": "integer",
+          "format": "int64",
+          "minimum": 1
+        }
+      }
+    },
+    "Order": {
+      "type": "object",
+      "properties": {
+        "order_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "user_id": {
+          "type": "string"
+        },
+        "shipping_provider": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "total_amount": {
+          "type": "number"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "OrderDetail": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/Order"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "items": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/OrderItem"
+              }
+            },
+            "payment_details": {
+              "$ref": "#/definitions/Payment"
+            }
+          }
+        }
+      ]
+    },
+    "OrderItem": {
+      "type": "object",
+      "properties": {
+        "product_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "quantity": {
+          "type": "integer"
+        },
+        "price": {
+          "type": "number"
+        }
+      }
+    },
+    "Payment": {
+      "type": "object",
+      "properties": {
+        "payment_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "status": {
+          "type": "string"
+        },
+        "amount": {
+          "type": "number"
+        },
+        "payment_method": {
+          "type": "string"
+        },
+        "payment_reference": {
+          "type": "string"
+        }
+      }
+    },
+    "OrderV2": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/Order"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "metadata": {
+              "type": "object"
+            }
+          }
+        }
+      ]
+    },
+    "BadRequestError": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "example": 400
+        },
+        "message": {
+          "type": "string",
+          "example": "Bad Request"
+        },
+        "details": {
+          "type": "string",
+          "example": "Invalid request parameters"
+        }
+      }
+    },
+    "UnauthorizedError": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "example": 401
+        },
+        "message": {
+          "type": "string",
+          "example": "Unauthorized"
+        },
+        "details": {
+          "type": "string",
+          "example": "Missing or invalid authentication token"
+        }
+      }
+    },
+    "NotFoundError": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "example": 404
+        },
+        "message": {
+          "type": "string",
+          "example": "Not Found"
+        },
+        "details": {
+          "type": "string",
+          "example": "Order not found"
+        }
+      }
+    },
+    "InternalServerError": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "example": 500
+        },
+        "message": {
+          "type": "string",
+          "example": "Internal Server Error"
+        },
+        "details": {
+          "type": "string",
+          "example": "Unexpected server error occurred"
+        }
+      }
+    }
+  }
+}

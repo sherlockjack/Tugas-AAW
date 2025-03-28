@@ -4,6 +4,7 @@ services:
   # Node.js application service
   microservice:
     build: .
+    image: tenant-image:latest
     environment:
       - AUTH_MS_URL=http://host.docker.internal:8000
       - DB_HOST=db

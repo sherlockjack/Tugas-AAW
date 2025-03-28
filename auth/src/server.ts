@@ -7,8 +7,18 @@ import cors from "cors";
 import authRoutes from "./user/user.routes"
 
 import express_prom_bundle from "express-prom-bundle";
+import swaggerUi from "swagger-ui-express";
+import YAML from "yamljs";
+import path from "path";
 
 const app: Express = express();
+
+// Load swagger.yaml
+const swaggerDocument = YAML.load(path.join(__dirname, "./swagger.yaml"));
+
+// Serve Swagger docs
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 
 // Prometheus metrics middleware
 const metricsMiddleware = express_prom_bundle({

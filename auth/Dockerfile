@@ -1,41 +1,43 @@
+# Stage 1: Fetching the node image and building the application
 FROM node:18.18.2 AS builder
 
+# Setting up the work directory
 WORKDIR /auth
 
+# Copying package.json separately
 COPY package.json ./
 
+# Install pnpm
 RUN npm install -g pnpm typescript
 
+# Installing dependencies
 RUN pnpm install
 
+# Copying the rest of the application
 COPY . .
 
+# Building our application
 RUN pnpm run build
 
+# Stage 2: Creating a lightweight image for production
 FROM node:18.18.2-slim
 
+# Declaring env
 ENV PORT 8000
 ENV NODE_ENV production
 
+# Set working directory
 WORKDIR /auth
-# Install pnpm in the runtime image to ensure it's available for the migrate command
-RUN npm install -g pnpm tsx
-# RUN apt-get update && apt-get install -y wait-for-it
 
-
+# Copy built files from the previous stage
 COPY --from=builder /auth/dist ./dist
 COPY --from=builder /auth/package.json ./package.json
-COPY --from=builder /auth/src ./src
-COPY --from=builder /auth/drizzle ./drizzle
-COPY --from=builder /auth/node_modules/ ./node_modules
 
+# Install production dependencies only
+RUN npm install --only=production
 
-
-# RUN npm install --only=production
-RUN pnpm install
-
-RUN pnpm add bcrypt --force
+# Expose server port
 EXPOSE 8000
 
-# Misalkan ada skrip migrasi yang perlu dijalankan saat kontainer mulai
-CMD ["sh", "-c", "pnpm run migrate && node dist/src/server.js"]
+# Start the application
+CMD ["node", "dist/src/server.js"]

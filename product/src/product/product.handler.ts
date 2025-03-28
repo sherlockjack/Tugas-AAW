@@ -66,3 +66,22 @@ export const deleteCategoryHandler = async (req: Request, res: Response) => {
     const response = await Service.deleteCategoryService(category_id);
     return res.status(response.status).send(response.data);
 }
+
+//Version 2
+
+export const v2GetAllCategoriesHandler = async (req: Request, res: Response) => {
+    try {
+      const response = await Service.getAllCategoriesService();
+      res.status(response.status).json({
+        success: true,
+        data: response.data
+      });
+    } catch (error: any) {
+      res.status(500).json({
+        success: false,
+        message: "Internal Server Error",
+        details: error.message
+      });
+    }
+  }
+  

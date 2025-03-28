@@ -1,0 +1,2412 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Marketplace Combined API",
+    "version": "1.0.0",
+    "description": "Gabungan dari API Authentication, Cart, Order, Product, Tenant, dan Wishlist"
+  },
+  "host": "localhost",
+  "basePath": "/",
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "securityDefinitions": {
+    "BearerAuth": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header",
+      "description": "JWT Token untuk autentikasi (Bearer token)"
+    },
+    "JWT_Cart": {
+      "type": "apiKey",
+      "name": "x-access-token",
+      "in": "header",
+      "description": "JWT token khusus untuk autentikasi di Cart"
+    }
+  },
+  "paths": {
+    "/api/auth/register": {
+      "post": {
+        "tags": [
+          "Authentication V00"
+        ],
+        "summary": "Registrasi pengguna baru",
+        "description": "Endpoint untuk membuat akun pengguna baru",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RegisterRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "User created successfully",
+            "schema": {
+              "$ref": "#/definitions/UserResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "tags": [
+          "Authentication V00"
+        ],
+        "summary": "Login pengguna",
+        "description": "Endpoint untuk login pengguna",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/LoginRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "schema": {
+              "$ref": "#/definitions/LoginResponse"
+            }
+          },
+          "404": {
+            "description": "Invalid credentials"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/auth/verify-token": {
+      "post": {
+        "tags": [
+          "Authentication V00"
+        ],
+        "summary": "Verifikasi user token",
+        "description": "Endpoint untuk memvalidasi token JWT pengguna",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/TokenVerificationRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Token valid",
+            "schema": {
+              "$ref": "#/definitions/UserResponse"
+            }
+          },
+          "401": {
+            "description": "Invalid token"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/auth/verify-admin-token": {
+      "post": {
+        "tags": [
+          "Authentication V00"
+        ],
+        "summary": "Verifikasi admin token",
+        "description": "Endpoint untuk memvalidasi token JWT admin",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/TokenVerificationRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Token valid",
+            "schema": {
+              "$ref": "#/definitions/UserResponse"
+            }
+          },
+          "401": {
+            "description": "Invalid token"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/auth/v2/auth/login": {
+      "post": {
+        "tags": [
+          "Authentication V2"
+        ],
+        "summary": "Login pengguna (v2)",
+        "description": "Endpoint untuk login pengguna dengan format response terstandarisasi",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/LoginRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "schema": {
+              "$ref": "#/definitions/V2Response"
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "$ref": "#/definitions/V2ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/V2ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/v2/auth/register": {
+      "post": {
+        "tags": [
+          "Authentication V2"
+        ],
+        "summary": "Registrasi pengguna baru (v2)",
+        "description": "Endpoint untuk membuat akun pengguna baru dengan format response terstandarisasi",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RegisterRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "User created successfully",
+            "schema": {
+              "$ref": "#/definitions/V2Response"
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "schema": {
+              "$ref": "#/definitions/V2ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/V2ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/v2/auth/token-verification": {
+      "post": {
+        "tags": [
+          "Authentication V2"
+        ],
+        "summary": "Verifikasi token (v2)",
+        "description": "Endpoint untuk memvalidasi token dengan format response terstandarisasi",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/TokenVerificationRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Token valid",
+            "schema": {
+              "$ref": "#/definitions/V2Response"
+            }
+          },
+          "401": {
+            "description": "Invalid token",
+            "schema": {
+              "$ref": "#/definitions/V2ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/V2ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/api/cart/cart": {
+      "get": {
+        "tags": [
+          "Cart"
+        ],
+        "summary": "Get all cart items",
+        "description": "Retrieve all items in the user's cart",
+        "security": [
+          {
+            "JWT_Cart": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "schema": {
+              "$ref": "#/definitions/CartItemsResponse"
+            }
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/responses/ServerError"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Cart"
+        ],
+        "summary": "Add item to cart",
+        "description": "Add a new product to the shopping cart",
+        "security": [
+          {
+            "JWT_Cart": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AddItemRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Item added successfully",
+            "schema": {
+              "$ref": "#/definitions/CartItem"
+            }
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/responses/ServerError"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Cart"
+        ],
+        "summary": "Update cart item",
+        "description": "Update quantity of an existing cart item",
+        "security": [
+          {
+            "JWT_Cart": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/EditItemRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cart item updated",
+            "schema": {
+              "$ref": "#/definitions/CartItem"
+            }
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/responses/ServerError"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Cart"
+        ],
+        "summary": "Remove item from cart",
+        "description": "Remove a product from the shopping cart",
+        "security": [
+          {
+            "JWT_Cart": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/DeleteItemRequest"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Item removed successfully"
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/api/cart/cart/v2": {
+      "post": {
+        "tags": [
+          "Cart"
+        ],
+        "summary": "Add item to cart (v2)",
+        "description": "Add item to cart with enhanced error handling",
+        "security": [
+          {
+            "JWT_Cart": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AddItemRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Item added successfully",
+            "schema": {
+              "$ref": "#/definitions/SuccessResponseV2"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponseV2"
+            }
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponseV2"
+            }
+          }
+        }
+      }
+    },
+    "/api/order": {
+      "get": {
+        "tags": [
+          "Order"
+        ],
+        "summary": "Get semua order user",
+        "description": "Mendapatkan semua order untuk user yang sedang login",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Daftar order berhasil didapatkan",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Order"
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/definitions/UnauthorizedError"
+          },
+          "500": {
+            "$ref": "#/definitions/InternalServerError"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Order"
+        ],
+        "summary": "Buat order baru",
+        "description": "Membuat order baru dari keranjang belanja",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/PlaceOrderRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Order berhasil dibuat",
+            "schema": {
+              "$ref": "#/definitions/Order"
+            }
+          },
+          "400": {
+            "$ref": "#/definitions/BadRequestError"
+          },
+          "401": {
+            "$ref": "#/definitions/UnauthorizedError"
+          },
+          "500": {
+            "$ref": "#/definitions/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/order/{orderId}": {
+      "get": {
+        "tags": [
+          "Order"
+        ],
+        "summary": "Dapatkan detail order",
+        "description": "Mendapatkan detail order berdasarkan ID",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Detail order berhasil didapatkan",
+            "schema": {
+              "$ref": "#/definitions/OrderDetail"
+            }
+          },
+          "401": {
+            "$ref": "#/definitions/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/definitions/NotFoundError"
+          },
+          "500": {
+            "$ref": "#/definitions/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/order/{orderId}/pay": {
+      "post": {
+        "tags": [
+          "Order"
+        ],
+        "summary": "Bayar order",
+        "description": "Proses pembayaran untuk order yang sudah dibuat",
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/PaymentRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Pembayaran berhasil diproses",
+            "schema": {
+              "$ref": "#/definitions/Payment"
+            }
+          },
+          "400": {
+            "$ref": "#/definitions/BadRequestError"
+          },
+          "404": {
+            "$ref": "#/definitions/NotFoundError"
+          },
+          "500": {
+            "$ref": "#/definitions/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/order/{orderId}/cancel": {
+      "post": {
+        "tags": [
+          "Order"
+        ],
+        "summary": "Batalkan order",
+        "description": "Membatalkan order yang sudah dibuat",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Order berhasil dibatalkan",
+            "schema": {
+              "$ref": "#/definitions/Order"
+            }
+          },
+          "401": {
+            "$ref": "#/definitions/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/definitions/NotFoundError"
+          },
+          "500": {
+            "$ref": "#/definitions/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/order/v2": {
+      "get": {
+        "tags": [
+          "Order"
+        ],
+        "summary": "Get semua order user (v2)",
+        "description": "Versi terbaru untuk mendapatkan semua order user",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Daftar order berhasil didapatkan",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/OrderV2"
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/definitions/UnauthorizedError"
+          },
+          "500": {
+            "$ref": "#/definitions/InternalServerError"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Order"
+        ],
+        "summary": "Buat order baru (v2)",
+        "description": "Versi terbaru untuk membuat order baru",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/PlaceOrderRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Order berhasil dibuat",
+            "schema": {
+              "$ref": "#/definitions/OrderV2"
+            }
+          },
+          "400": {
+            "$ref": "#/definitions/BadRequestError"
+          },
+          "401": {
+            "$ref": "#/definitions/UnauthorizedError"
+          },
+          "500": {
+            "$ref": "#/definitions/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/product/product": {
+      "get": {
+        "tags": [
+          "Products"
+        ],
+        "summary": "Mendapatkan semua produk",
+        "responses": {
+          "200": {
+            "description": "Daftar produk berhasil didapatkan",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "products": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/Product"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/responses/ProductInternalServerError"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Products"
+        ],
+        "summary": "Membuat produk baru",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CreateProductRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Produk berhasil dibuat",
+            "schema": {
+              "$ref": "#/definitions/Product"
+            }
+          },
+          "500": {
+            "$ref": "#/responses/ProductInternalServerError"
+          }
+        }
+      }
+    },
+    "/api/product/product/category": {
+      "get": {
+        "tags": [
+          "Categories"
+        ],
+        "summary": "Mendapatkan semua kategori",
+        "responses": {
+          "200": {
+            "description": "Daftar kategori berhasil didapatkan",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "categories": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/Category"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/responses/ProductInternalServerError"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Categories"
+        ],
+        "summary": "Membuat kategori baru",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CreateCategoryRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Kategori berhasil dibuat",
+            "schema": {
+              "$ref": "#/definitions/Category"
+            }
+          },
+          "500": {
+            "$ref": "#/responses/ProductInternalServerError"
+          }
+        }
+      }
+    },
+    "/api/product/product/{id}": {
+      "get": {
+        "tags": [
+          "Products"
+        ],
+        "summary": "Mendapatkan produk berdasarkan ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Detail produk",
+            "schema": {
+              "$ref": "#/definitions/Product"
+            }
+          },
+          "404": {
+            "$ref": "#/responses/ProductNotFound"
+          },
+          "500": {
+            "$ref": "#/responses/ProductInternalServerError"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Products"
+        ],
+        "summary": "Memperbarui produk",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UpdateProductRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Produk berhasil diperbarui",
+            "schema": {
+              "$ref": "#/definitions/Product"
+            }
+          },
+          "500": {
+            "$ref": "#/responses/ProductInternalServerError"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Products"
+        ],
+        "summary": "Menghapus produk",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Produk berhasil dihapus"
+          },
+          "500": {
+            "$ref": "#/responses/ProductInternalServerError"
+          }
+        }
+      }
+    },
+    "/api/product/product/category/{category_id}": {
+      "get": {
+        "tags": [
+          "Products"
+        ],
+        "summary": "Mendapatkan produk berdasarkan kategori",
+        "parameters": [
+          {
+            "name": "category_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Daftar produk dalam kategori",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "products": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/Product"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/responses/ProductInternalServerError"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Categories"
+        ],
+        "summary": "Memperbarui kategori",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "category_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UpdateCategoryRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Kategori berhasil diperbarui",
+            "schema": {
+              "$ref": "#/definitions/Category"
+            }
+          },
+          "500": {
+            "$ref": "#/responses/ProductInternalServerError"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Categories"
+        ],
+        "summary": "Menghapus kategori",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "category_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Kategori berhasil dihapus"
+          },
+          "500": {
+            "$ref": "#/responses/ProductInternalServerError"
+          }
+        }
+      }
+    },
+    "/api/product/product/many": {
+      "post": {
+        "tags": [
+          "Products"
+        ],
+        "summary": "Mendapatkan banyak produk sekaligus berdasarkan ID",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "productIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              },
+              "required": [
+                "productIds"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Daftar produk yang diminta",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Product"
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/responses/ProductInternalServerError"
+          }
+        }
+      }
+    },
+    "/api/product/product/v2/categories": {
+      "get": {
+        "tags": [
+          "Categories"
+        ],
+        "summary": "Mendapatkan semua kategori (versi 2)",
+        "responses": {
+          "200": {
+            "description": "Daftar kategori format baru",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean"
+                },
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/Category"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/responses/ProductInternalServerError"
+          }
+        }
+      }
+    },
+    "/api/tenant": {
+      "post": {
+        "tags": [
+          "Tenant"
+        ],
+        "summary": "Membuat tenant baru",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CreateTenantRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Tenant berhasil dibuat",
+            "schema": {
+              "$ref": "#/definitions/Tenant"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/tenant/{tenant_id}": {
+      "get": {
+        "tags": [
+          "Tenant"
+        ],
+        "summary": "Mendapatkan detail tenant",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "tenant_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Tenant"
+            }
+          },
+          "404": {
+            "description": "Tenant tidak ditemukan"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Tenant"
+        ],
+        "summary": "Memperbarui data tenant",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "tenant_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UpdateTenantRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Tenant"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Tenant tidak ditemukan"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Tenant"
+        ],
+        "summary": "Menghapus tenant",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "tenant_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Tenant tidak ditemukan"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/wishlist/wishlist": {
+      "get": {
+        "tags": [
+          "Wishlist"
+        ],
+        "summary": "Mendapatkan semua wishlist pengguna",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Daftar wishlist pengguna",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Wishlist"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Wishlist"
+        ],
+        "summary": "Membuat wishlist baru",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CreateWishlistRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Wishlist berhasil dibuat",
+            "schema": {
+              "$ref": "#/definitions/Wishlist"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/wishlist/wishlist/{id}": {
+      "get": {
+        "tags": [
+          "Wishlist"
+        ],
+        "summary": "Mendapatkan detail wishlist by ID",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Detail wishlist",
+            "schema": {
+              "$ref": "#/definitions/WishlistDetail"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Wishlist tidak ditemukan"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Wishlist"
+        ],
+        "summary": "Memperbarui nama wishlist",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UpdateWishlistRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Wishlist berhasil diupdate",
+            "schema": {
+              "$ref": "#/definitions/Wishlist"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Wishlist"
+        ],
+        "summary": "Menghapus wishlist",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Wishlist berhasil dihapus"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/wishlist/wishlist/add": {
+      "post": {
+        "tags": [
+          "Wishlist Item"
+        ],
+        "summary": "Menambahkan produk ke wishlist",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AddProductRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Produk berhasil ditambahkan",
+            "schema": {
+              "$ref": "#/definitions/WishlistDetail"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/wishlist/wishlist/remove": {
+      "delete": {
+        "tags": [
+          "Wishlist Item"
+        ],
+        "summary": "Menghapus produk dari wishlist",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RemoveProductRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Produk berhasil dihapus"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/wishlist/wishlist/v2": {
+      "get": {
+        "tags": [
+          "Wishlist v2"
+        ],
+        "summary": "[v2] Mendapatkan semua wishlist pengguna",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Daftar wishlist pengguna (versi 2)",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Wishlist"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/wishlist/wishlist/v2/wishlist": {
+      "post": {
+        "tags": [
+          "Wishlist v2"
+        ],
+        "summary": "[v2] Membuat wishlist baru",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CreateWishlistRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Wishlist berhasil dibuat (versi 2)",
+            "schema": {
+              "$ref": "#/definitions/Wishlist"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "RegisterRequest": {
+      "type": "object",
+      "required": [
+        "username",
+        "email",
+        "password",
+        "full_name",
+        "address",
+        "phone_number"
+      ],
+      "properties": {
+        "username": {
+          "type": "string",
+          "example": "johndoe"
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "example": "johndoe@example.com"
+        },
+        "password": {
+          "type": "string",
+          "format": "password",
+          "minLength": 8,
+          "description": "Password harus mengandung:\n- Minimal 8 karakter\n- Minimal 1 huruf kecil\n- Minimal 1 huruf besar\n- Minimal 1 angka\n",
+          "example": "Password123"
+        },
+        "full_name": {
+          "type": "string",
+          "example": "John Doe"
+        },
+        "address": {
+          "type": "string",
+          "example": "Jl. Sudirman No. 123"
+        },
+        "phone_number": {
+          "type": "string",
+          "example": 81234567890
+        }
+      }
+    },
+    "LoginRequest": {
+      "type": "object",
+      "required": [
+        "username",
+        "password"
+      ],
+      "properties": {
+        "username": {
+          "type": "string",
+          "example": "johndoe"
+        },
+        "password": {
+          "type": "string",
+          "format": "password",
+          "example": "Password123"
+        }
+      }
+    },
+    "TokenVerificationRequest": {
+      "type": "object",
+      "required": [
+        "token"
+      ],
+      "properties": {
+        "token": {
+          "type": "string",
+          "description": "JWT token yang akan diverifikasi",
+          "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        }
+      }
+    },
+    "UserResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "full_name": {
+          "type": "string"
+        },
+        "address": {
+          "type": "string"
+        },
+        "phone_number": {
+          "type": "string"
+        }
+      }
+    },
+    "LoginResponse": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "string",
+          "description": "JWT token untuk autentikasi"
+        }
+      }
+    },
+    "ErrorResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "V2Response": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "data": {
+          "type": "object"
+        }
+      }
+    },
+    "V2ErrorResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "error": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            },
+            "details": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "CartItem": {
+      "type": "object",
+      "properties": {
+        "cart_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "product_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "quantity": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "CartItemsResponse": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/CartItem"
+      }
+    },
+    "AddItemRequest": {
+      "type": "object",
+      "required": [
+        "product_id",
+        "quantity"
+      ],
+      "properties": {
+        "product_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "quantity": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "EditItemRequest": {
+      "type": "object",
+      "required": [
+        "cart_id"
+      ],
+      "properties": {
+        "cart_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "quantity": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "DeleteItemRequest": {
+      "type": "object",
+      "required": [
+        "product_id"
+      ],
+      "properties": {
+        "product_id": {
+          "type": "string",
+          "format": "uuid"
+        }
+      }
+    },
+    "SuccessResponseV2": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/CartItem"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "ErrorResponseV2": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "string"
+        }
+      }
+    },
+    "PlaceOrderRequest": {
+      "type": "object",
+      "required": [
+        "shipping_provider"
+      ],
+      "properties": {
+        "shipping_provider": {
+          "type": "string",
+          "enum": [
+            "JNE",
+            "TIKI",
+            "SICEPAT",
+            "GOSEND",
+            "GRAB_EXPRESS"
+          ]
+        }
+      }
+    },
+    "PaymentRequest": {
+      "type": "object",
+      "required": [
+        "payment_method",
+        "payment_reference",
+        "amount"
+      ],
+      "properties": {
+        "payment_method": {
+          "type": "string"
+        },
+        "payment_reference": {
+          "type": "string"
+        },
+        "amount": {
+          "type": "integer",
+          "format": "int64",
+          "minimum": 1
+        }
+      }
+    },
+    "Order": {
+      "type": "object",
+      "properties": {
+        "order_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "user_id": {
+          "type": "string"
+        },
+        "shipping_provider": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "total_amount": {
+          "type": "number"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "OrderDetail": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/Order"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "items": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/OrderItem"
+              }
+            },
+            "payment_details": {
+              "$ref": "#/definitions/Payment"
+            }
+          }
+        }
+      ]
+    },
+    "OrderItem": {
+      "type": "object",
+      "properties": {
+        "product_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "quantity": {
+          "type": "integer"
+        },
+        "price": {
+          "type": "number"
+        }
+      }
+    },
+    "Payment": {
+      "type": "object",
+      "properties": {
+        "payment_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "status": {
+          "type": "string"
+        },
+        "amount": {
+          "type": "number"
+        },
+        "payment_method": {
+          "type": "string"
+        },
+        "payment_reference": {
+          "type": "string"
+        }
+      }
+    },
+    "OrderV2": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/Order"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "metadata": {
+              "type": "object"
+            }
+          }
+        }
+      ]
+    },
+    "BadRequestError": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "example": 400
+        },
+        "message": {
+          "type": "string",
+          "example": "Bad Request"
+        },
+        "details": {
+          "type": "string",
+          "example": "Invalid request parameters"
+        }
+      }
+    },
+    "UnauthorizedError": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "example": 401
+        },
+        "message": {
+          "type": "string",
+          "example": "Unauthorized"
+        },
+        "details": {
+          "type": "string",
+          "example": "Missing or invalid authentication token"
+        }
+      }
+    },
+    "NotFoundError": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "example": 404
+        },
+        "message": {
+          "type": "string",
+          "example": "Not Found"
+        },
+        "details": {
+          "type": "string",
+          "example": "Order not found"
+        }
+      }
+    },
+    "InternalServerError": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "example": 500
+        },
+        "message": {
+          "type": "string",
+          "example": "Internal Server Error"
+        },
+        "details": {
+          "type": "string",
+          "example": "Unexpected server error occurred"
+        }
+      }
+    },
+    "Product": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "price": {
+          "type": "number"
+        },
+        "quantity_available": {
+          "type": "integer"
+        },
+        "category_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "Category": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "name": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "CreateProductRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "price": {
+          "type": "number"
+        },
+        "quantity_available": {
+          "type": "integer"
+        },
+        "category_id": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "required": [
+        "name",
+        "price",
+        "quantity_available"
+      ]
+    },
+    "UpdateProductRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "price": {
+          "type": "number"
+        },
+        "quantity_available": {
+          "type": "integer"
+        },
+        "category_id": {
+          "type": "string",
+          "format": "uuid"
+        }
+      }
+    },
+    "CreateCategoryRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ]
+    },
+    "UpdateCategoryRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "Tenant": {
+      "type": "object",
+      "properties": {
+        "tenant_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "owner_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "CreateTenantRequest": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "example": "Tenant Baru"
+        }
+      }
+    },
+    "UpdateTenantRequest": {
+      "type": "object",
+      "properties": {
+        "new_tenant_id": {
+          "type": "string",
+          "format": "uuid",
+          "example": "123e4567-e89b-12d3-a456-426614174000"
+        },
+        "owner_id": {
+          "type": "string",
+          "format": "uuid",
+          "example": "123e4567-e89b-12d3-a456-426614174000"
+        },
+        "name": {
+          "type": "string",
+          "example": "Nama Tenant Diupdate"
+        }
+      }
+    },
+    "Wishlist": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "name": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "tenant_id": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "WishlistDetail": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "wishlist_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "product_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "CreateWishlistRequest": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 255,
+          "example": "Wishlist Utama"
+        }
+      }
+    },
+    "UpdateWishlistRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 255,
+          "example": "Wishlist Baru"
+        }
+      }
+    },
+    "AddProductRequest": {
+      "type": "object",
+      "required": [
+        "wishlist_id",
+        "product_id"
+      ],
+      "properties": {
+        "wishlist_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "product_id": {
+          "type": "string",
+          "format": "uuid"
+        }
+      }
+    },
+    "RemoveProductRequest": {
+      "type": "object",
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        }
+      }
+    }
+  },
+  "responses": {
+    "BadRequest": {
+      "description": "Invalid request body",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "Unauthorized": {
+      "description": "Missing or invalid authentication",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "NotFound": {
+      "description": "Resource not found",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "ServerError": {
+      "description": "Internal server error",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "ProductNotFound": {
+      "description": "Resource tidak ditemukan",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "ProductInternalServerError": {
+      "description": "Kesalahan server internal",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          },
+          "details": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

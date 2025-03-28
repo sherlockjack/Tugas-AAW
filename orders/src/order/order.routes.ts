@@ -11,4 +11,8 @@ router.post('', verifyJWT, validate(Validation.placeOrderSchema), Handler.placeO
 router.post('/:orderId/pay', validate(Validation.payOrderSchema), Handler.payOrderHandler);
 router.post('/:orderId/cancel', verifyJWT, validate(Validation.cancelOrderSchema), Handler.cancelOrderHandler);
 
+
+//version2
+router.post('/v2', verifyJWT, validate(Validation.placeOrderSchema), Handler.placeOrderHandlerV2);
+router.get('/v2', verifyJWT, Handler.getAllOrdersHandlerV2);
 export default router;

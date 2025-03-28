@@ -10,4 +10,10 @@ router.post('', verifyJWT, validate(Validation.addItemToCartSchema), Handler.add
 router.put('', verifyJWT, validate(Validation.editCartItemSchema), Handler.editCartItemHandler);
 router.delete('', verifyJWT, validate(Validation.deleteCartItemSchema), Handler.deleteCartItemHandler);
 
+
+//version2
+router.post('/v2',verifyJWT,validate(Validation.addItemToCartSchema),Handler.addItemToCartHandlerV2);
+router.get('v2', verifyJWT, Handler.getAllCartItemsHandler);
+
+  
 export default router;

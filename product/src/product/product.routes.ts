@@ -17,4 +17,8 @@ router.put('/category/:category_id', verifyJWTProduct, validate(Validation.editC
 router.delete('/:id', verifyJWTProduct, validate(Validation.deleteProductSchema), Handler.deleteProductHandler);
 router.delete('/category/:category_id', verifyJWTProduct, validate(Validation.deleteCategorySchema), Handler.deleteCategoryHandler);
 
+
+//version2
+router.get('/v2/categories', Handler.v2GetAllCategoriesHandler);
+
 export default router;

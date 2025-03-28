@@ -4,6 +4,7 @@ services:
   # Node.js application service
   microservice:
     build: .
+    image: auth-image:latest
     ports:
       - "8000:8000"
     environment:
@@ -13,9 +14,6 @@ services:
       - DB_PORT=5432
     depends_on:
       - db
-    networks:
-      - app-network
-
 
   # PostgreSQL database service
   db:
@@ -25,8 +23,9 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
-      - "5432:5432"
+      - "5429:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data  
 
-networks:
-  app-network:
-    driver: bridge
+volumes:
+  postgres_data:  # ✅ Definisikan volume
