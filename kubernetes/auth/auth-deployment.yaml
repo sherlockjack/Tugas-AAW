@@ -25,5 +25,5 @@ spec:
           value: "auth_ms_jwt_secret"
         - name: DB_HOST
           value: "auth-db-service"
-        - name: DB_PORT
+        - name: DB_PORT 
           value: "5432"
