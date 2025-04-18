@@ -12,18 +12,30 @@ spec:
       labels:
         app: auth-app
     spec:
+      tolerations:
+      - key: "reserved-for"
+        operator: "Equal"
+        value: "workload"
+        effect: "NoSchedule"
       containers:
       - name: auth-app
-        image: auth-image:latest
+        image: reiounagata/auth-image:latest
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8000
         env:
         - name: TENANT_ID
-          value: "47dd6b24-0b23-46b0-a662-776158d089ba"
+          value: "47dd6b24-0b23-46b0-a662-776158d09ba"
         - name: JWT_SECRET
           value: "auth_ms_jwt_secret"
         - name: DB_HOST
           value: "auth-db-service"
-        - name: DB_PORT 
+        - name: DB_PORT
           value: "5432"
+        resources:
+          requests:
+            cpu: "0.2"    # 20% dari 1 vCPU t2.nano
+            memory: "64Mi"  # Jangan lebih dari 256Mi!
+          limits:
+            cpu: "0.4"
+            memory: "128Mi"
